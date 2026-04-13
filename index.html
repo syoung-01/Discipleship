@@ -146,14 +146,14 @@
     ];
 
     let lastIndex = -1;
-    let revealed = false;
+    let revealStep = 0;
 
     function showRandom() {
       let idx;
       do { idx = Math.floor(Math.random() * verses.length); } while (verses.length > 1 && idx === lastIndex);
       lastIndex = idx;
 
-      revealed = false;
+      revealStep = 0;
 
       const card = document.getElementById('card');
       card.classList.add('fade');
@@ -169,15 +169,23 @@
     }
 
     document.getElementById('card').addEventListener('click', function () {
-      if (revealed) return;
-
       const verseEl = document.querySelector('.verse');
       if (!verseEl) return;
 
-      verseEl.textContent = verses[lastIndex].verse;
-      verseEl.style.color = "#1a1a1a";
+      const fullText = verses[lastIndex].verse;
 
-      revealed = true;
+      if (revealStep === 0) {
+        // 1번째 클릭 → 첫 단어만
+        const firstWord = fullText.split(' ')[0];
+        verseEl.textContent = firstWord;
+        verseEl.style.color = "#1a1a1a";
+        revealStep = 1;
+
+      } else if (revealStep === 1) {
+        // 2번째 클릭 → 전체
+        verseEl.textContent = fullText;
+        revealStep = 2;
+      }
     });
 
     showRandom();
